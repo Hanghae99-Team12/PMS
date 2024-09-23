@@ -10,7 +10,7 @@ public class PointService {
 
     private final UserPointTable userPointTable;
 
-    public synchronized UserPoint charge(long userId, long amount) {
+    public UserPoint charge(long userId, long amount) {
         return userPointTable.insertOrUpdate(userId, amount);
     }
 }
