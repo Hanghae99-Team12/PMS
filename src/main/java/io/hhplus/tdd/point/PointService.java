@@ -4,6 +4,7 @@ import io.hhplus.tdd.database.UserPointTable;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,5 +21,13 @@ public class PointService {
 
     public UserPoint showPoint(long id) {
         return pointRepository.findById(id);
+    }
+
+    public UserPoint use(long userId, long amount) {
+        UserPoint userPoint = showPoint(userId);
+        if (userPoint.point() < amount) {
+            throw new IllegalArgumentException("보유한 포인트보다 더 사용할 수 없습니다.");
+        }
+        return pointRepository.updatePointById(userId, userPoint.point() - amount);
     }
 }
