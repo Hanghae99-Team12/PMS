@@ -2,21 +2,32 @@ package io.hhplus.tdd.point;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class PointServiceTest {
 
     private static final Logger log = LoggerFactory.getLogger(PointServiceTest.class);
 
-    @Autowired
+    @Mock
+    private UserPointRepository userPointRepository;
+
     PointService pointService;
+
+    @BeforeEach
+    void setUp() {
+        pointService = new PointService(userPointRepository);
+    }
 
     /**
      * Given: 특정 유저 포인트를 충전을 하고,
@@ -29,7 +40,10 @@ class PointServiceTest {
         // Given
         long userId = 1L;
         long point = 5000L;
-        pointService.charge(userId, point);
+        Mockito.lenient().when(userPointRepository.updatePointById(userId, point))
+                .thenReturn(UserPoint.of(userId, point));
+        Mockito.lenient().when(userPointRepository.findById(userId))
+                .thenReturn(UserPoint.of(userId, point));
 
         // When
         UserPoint userPoint = pointService.showPoint(userId);
@@ -48,7 +62,14 @@ class PointServiceTest {
     void use() {
         // Given
         long userId = 1L;
-        pointService.charge(userId, 5000L);
+        long point = 5000L;
+        long remainOfPoint = 4000L;
+        Mockito.lenient().when(userPointRepository.updatePointById(userId, point))
+                .thenReturn(UserPoint.of(userId, point));
+        Mockito.lenient().when(userPointRepository.findById(userId))
+                .thenReturn(UserPoint.of(userId, point));
+        Mockito.lenient().when(userPointRepository.updatePointById(userId, remainOfPoint))
+                .thenReturn(UserPoint.of(userId, remainOfPoint));
 
         // When
         UserPoint userPoint = pointService.use(userId, 1000L);
@@ -67,7 +88,11 @@ class PointServiceTest {
     void useException() {
         // Given
         long userId = 1L;
-        pointService.charge(userId, 5000L);
+        long point = 5000L;
+        Mockito.lenient().when(userPointRepository.updatePointById(userId, point))
+                .thenReturn(UserPoint.of(userId, point));
+        Mockito.lenient().when(userPointRepository.findById(userId))
+                .thenReturn(UserPoint.of(userId, point));
 
         // When & Then
         assertThatThrownBy(() -> pointService.use(userId, 6000L)).isInstanceOf(IllegalArgumentException.class);
