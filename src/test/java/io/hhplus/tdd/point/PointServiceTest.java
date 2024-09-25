@@ -20,7 +20,7 @@ class PointServiceTest {
     /**
      * Given: 특정 유저 포인트를 충전을 하고,
      * When: 해당 유저 포인트를 조회를 하면,
-     * Then: 해당 유저의 포인트가 충정액 만큼 증가한다.
+     * Then: 해당 유저의 포인트가 충전액 만큼 증가한다.
      */
     @Test
     @DisplayName("특정 유저 포인트 충전한다.")
