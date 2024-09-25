@@ -3,7 +3,9 @@ package io.hhplus.tdd.point;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,11 +24,14 @@ class PointServiceTest {
     @Mock
     private UserPointRepository userPointRepository;
 
+    @Mock
+    private PointHistoryRepository pointHistoryRepository;
+
     PointService pointService;
 
     @BeforeEach
     void setUp() {
-        pointService = new PointService(userPointRepository);
+        pointService = new PointService(userPointRepository, pointHistoryRepository);
     }
 
     /**
@@ -96,5 +101,32 @@ class PointServiceTest {
 
         // When & Then
         assertThatThrownBy(() -> pointService.use(userId, 6000L)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    /**
+     * Given: 특정 유저 포인트 내역을 가지고있고,
+     * When: 특정 유저의 포인트 내역을 조회하면,
+     * Then: 특정 유저의 포인트 내역 목록이 반환된다.
+     */
+    @Test
+    @DisplayName("특정 유저의 히스토리를 확인 할 수 있다.")
+    void showHistory() {
+        // Given & When
+        long userId = 1L;
+        long firstPoint = 5000L;
+        PointHistory firstHistory = new PointHistory(userId, firstPoint, TransactionType.CHARGE);
+
+        long secondPoint = 4000L;
+        PointHistory secondHistory = new PointHistory(userId, secondPoint, TransactionType.CHARGE);
+
+        long usePoint = 1000L;
+        PointHistory thirdHistory = new PointHistory(userId, usePoint, TransactionType.USE);
+
+        Mockito.lenient().when(pointHistoryRepository.findHistoriesById(userId))
+                .thenReturn(List.of(firstHistory, secondHistory, thirdHistory));
+
+        // Then
+        List<PointHistory> pointHistories = pointService.showHistories(userId);
+        assertThat(pointHistories).containsExactlyInAnyOrder(firstHistory, secondHistory, thirdHistory);
     }
 }

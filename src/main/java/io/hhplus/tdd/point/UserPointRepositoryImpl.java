@@ -3,8 +3,9 @@ package io.hhplus.tdd.point;
 import io.hhplus.tdd.database.UserPointTable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
+@Repository("userPointRepository")
 @RequiredArgsConstructor
 public class UserPointRepositoryImpl implements UserPointRepository {
 
