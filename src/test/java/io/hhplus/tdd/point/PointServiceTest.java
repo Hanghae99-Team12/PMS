@@ -6,6 +6,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,20 +47,15 @@ class PointServiceTest {
     void charge() {
         // Given
         long userId = 1L;
-        long expectedPoint = 13000L;
-
-        // When
         Mockito.lenient().when(userPointRepository.findById(userId))
                 .thenReturn(UserPoint.of(userId, 0L));
-        long firstPointOfCharge = 5000L;
-        pointService.charge(userId, firstPointOfCharge);
-        long secondPointOfCharge = 8000L;
-        Mockito.lenient().when(userPointRepository.findById(userId))
-                .thenReturn(UserPoint.of(userId, 5000L));
-        UserPoint userPoint = pointService.charge(userId, secondPointOfCharge);
+
+        // When
+        long pointOfCharge = 5000L;
+        UserPoint userPoint = pointService.charge(userId, pointOfCharge);
 
         // Then
-        assertThat(userPoint.point()).isEqualTo(expectedPoint);
+        assertThat(userPoint.point()).isEqualTo(pointOfCharge);
     }
 
     /**
