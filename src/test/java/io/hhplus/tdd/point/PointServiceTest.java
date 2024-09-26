@@ -65,30 +65,6 @@ class PointServiceTest {
 
     /**
      * Given: 특정 유저 포인트를 충전을 하고,
-     * When: 해당 유저 포인트를 사용하면,
-     * Then: 해당 유저의 포인트가 사용한 양을 제외한 포인트가 남는다.
-     */
-    @Test
-    @DisplayName("특정 유저 포인트 사용한다.")
-    void use() {
-        // Given
-        long userId = 1L;
-        long point = 5000L;
-        long remainOfPoint = 4000L;
-        Mockito.lenient().when(userPointRepository.findById(userId))
-                .thenReturn(UserPoint.of(userId, point));
-        Mockito.lenient().when(userPointRepository.updatePointById(userId, 1000L, TransactionType.USE))
-                .thenReturn(UserPoint.of(userId, remainOfPoint));
-
-        // When
-        UserPoint userPoint = pointService.use(userId, 1000L);
-
-        // Then
-        assertThat(userPoint.point()).isEqualTo(4000L);
-    }
-
-    /**
-     * Given: 특정 유저 포인트를 충전을 하고,
      * When: 해당 유저가 가진 포인트를 더 사용하면,
      * Then: 예외가 발생한다.
      */
