@@ -29,4 +29,8 @@ public record UserPoint(
     public UserPoint plusPoint(long amount) {
         return new UserPoint(id, point + amount, System.currentTimeMillis());
     }
+
+    public UserPoint minusPoint(long amount) {
+        return new UserPoint(id, point - amount, System.currentTimeMillis());
+    }
 }

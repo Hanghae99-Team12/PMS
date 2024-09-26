@@ -37,7 +37,8 @@ public class PointService {
             throw new IllegalArgumentException("보유한 포인트보다 더 사용할 수 없습니다.");
         }
         pointHistoryRepository.create(userId, amount, TransactionType.USE);
-        return pointRepository.updatePointById(userId, userPoint.point() - amount);
+        UserPoint useUserPoint = userPoint.minusPoint(amount);
+        return pointRepository.updatePointById(userId, useUserPoint.point());
     }
 
     public List<PointHistory> showHistories(long userId) {
