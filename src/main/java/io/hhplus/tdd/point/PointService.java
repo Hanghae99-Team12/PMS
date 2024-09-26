@@ -1,6 +1,7 @@
 package io.hhplus.tdd.point;
 
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,10 @@ public class PointService {
     }
 
     public UserPoint showPoint(long id) {
+        UserPoint findUserPoint = pointRepository.findById(id);
+        if (Objects.isNull(findUserPoint)) {
+            throw new IllegalArgumentException("해당 유저는 존재하지 않습니다.");
+        }
         return pointRepository.findById(id);
     }
 

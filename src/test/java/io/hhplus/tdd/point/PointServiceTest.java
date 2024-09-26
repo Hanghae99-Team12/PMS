@@ -129,4 +129,16 @@ class PointServiceTest {
         List<PointHistory> pointHistories = pointService.showHistories(userId);
         assertThat(pointHistories).containsExactlyInAnyOrder(firstHistory, secondHistory, thirdHistory);
     }
+
+    /**
+     * When: 존재하지 않는 유저를 조회를 하면,
+     * Then: 예외가 발생합니다..
+     */
+    @Test
+    @DisplayName("없는 유저의 포인트 조회시 예외 발생")
+    void find_non_existent_userPoint_exception() {
+        // When & Then
+        assertThatThrownBy(() ->pointService.showPoint(0L))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
