@@ -169,4 +169,16 @@ class PointServiceTest {
         assertThatThrownBy(() -> pointService.use(0L, 5000L))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    /**
+     * When: 해당 유저가 100,000 초과 충전하면,
+     * Then: 예외가 발생한다.
+     */
+    @Test
+    @DisplayName("유저가 포인트를 충전 할때 최대 잔고를 초과를 하면 예외가 발생한다.")
+    void throws_exception_if_userPoint_exceed_limit() {
+        // When & Then
+        assertThatThrownBy(() -> pointService.charge(0L, 100_001L))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }

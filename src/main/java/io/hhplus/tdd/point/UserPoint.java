@@ -6,6 +6,8 @@ public record UserPoint(
         long updateMillis
 ) {
 
+    private static final long MAX_POINT = 100_000L;
+
     public static UserPoint empty(long id) {
         return new UserPoint(id, 0, System.currentTimeMillis());
     }
@@ -27,10 +29,17 @@ public record UserPoint(
     }
 
     public UserPoint plusPoint(long amount) {
+        if (isExceedMaxPoint(amount)) {
+            throw new IllegalArgumentException();
+        }
         return new UserPoint(id, point + amount, System.currentTimeMillis());
     }
 
     public UserPoint minusPoint(long amount) {
         return new UserPoint(id, point - amount, System.currentTimeMillis());
+    }
+
+    private boolean isExceedMaxPoint(long point) {
+        return this.point + point > MAX_POINT;
     }
 }
