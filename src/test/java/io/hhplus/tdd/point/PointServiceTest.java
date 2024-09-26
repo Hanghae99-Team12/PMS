@@ -44,17 +44,20 @@ class PointServiceTest {
     void charge() {
         // Given
         long userId = 1L;
-        long point = 5000L;
-        Mockito.lenient().when(userPointRepository.updatePointById(userId, point))
-                .thenReturn(UserPoint.of(userId, point));
-        Mockito.lenient().when(userPointRepository.findById(userId))
-                .thenReturn(UserPoint.of(userId, point));
+        long expectedPoint = 13000L;
 
         // When
-        UserPoint userPoint = pointService.showPoint(userId);
+        Mockito.lenient().when(userPointRepository.findById(userId))
+                .thenReturn(UserPoint.of(userId, 0L));
+        long firstPointOfCharge = 5000L;
+        pointService.charge(userId, firstPointOfCharge);
+        long secondPointOfCharge = 8000L;
+        Mockito.lenient().when(userPointRepository.findById(userId))
+                .thenReturn(UserPoint.of(userId, 5000L));
+        UserPoint userPoint = pointService.charge(userId, secondPointOfCharge);
 
         // Then
-        assertThat(userPoint.point()).isEqualTo(point);
+        assertThat(userPoint.point()).isEqualTo(expectedPoint);
     }
 
     /**
