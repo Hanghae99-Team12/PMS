@@ -5,10 +5,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
+import io.hhplus.tdd.database.UserPointTable;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,15 +49,18 @@ class PointServiceTest {
     void charge() {
         // Given
         long userId = 1L;
-        Mockito.lenient().when(userPointRepository.findById(userId))
-                .thenReturn(UserPoint.of(userId, 0L));
+        long pointOfCharge = 5000L;
+        UserPoint userPoint = UserPoint.of(userId, 0L);
+        given(userPointRepository.findById(userId))
+                .willReturn(userPoint);
+        given(userPointRepository.updatePointById(userId, pointOfCharge, TransactionType.CHARGE))
+                .willReturn(userPoint.plusPoint(5000L));
 
         // When
-        long pointOfCharge = 5000L;
-        UserPoint userPoint = pointService.charge(userId, pointOfCharge);
+        UserPoint result = pointService.charge(userId, pointOfCharge);
 
         // Then
-        assertThat(userPoint.point()).isEqualTo(pointOfCharge);
+        assertThat(result.point()).isEqualTo(pointOfCharge);
     }
 
     /**
@@ -70,11 +75,9 @@ class PointServiceTest {
         long userId = 1L;
         long point = 5000L;
         long remainOfPoint = 4000L;
-        Mockito.lenient().when(userPointRepository.updatePointById(userId, point))
-                .thenReturn(UserPoint.of(userId, point));
         Mockito.lenient().when(userPointRepository.findById(userId))
                 .thenReturn(UserPoint.of(userId, point));
-        Mockito.lenient().when(userPointRepository.updatePointById(userId, remainOfPoint))
+        Mockito.lenient().when(userPointRepository.updatePointById(userId, 1000L, TransactionType.USE))
                 .thenReturn(UserPoint.of(userId, remainOfPoint));
 
         // When
@@ -95,7 +98,7 @@ class PointServiceTest {
         // Given
         long userId = 1L;
         long point = 5000L;
-        Mockito.lenient().when(userPointRepository.updatePointById(userId, point))
+        Mockito.lenient().when(userPointRepository.updatePointById(userId, point, TransactionType.USE))
                 .thenReturn(UserPoint.of(userId, point));
         Mockito.lenient().when(userPointRepository.findById(userId))
                 .thenReturn(UserPoint.of(userId, point));

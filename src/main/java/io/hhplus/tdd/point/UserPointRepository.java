@@ -4,5 +4,5 @@ import org.springframework.stereotype.Repository;
 
 interface UserPointRepository {
     UserPoint findById(Long id);
-    UserPoint updatePointById(Long id, long point);
+    UserPoint updatePointById(Long id, long point, TransactionType type);
 }

@@ -20,7 +20,7 @@ public class PointService {
         UserPoint userPoint = showPoint(userId);
         UserPoint userPointOfCharge = userPoint.plusPoint(amount);
         pointHistoryRepository.create(userId, userPointOfCharge.point(), TransactionType.CHARGE);
-        return userPointOfCharge;
+        return pointRepository.updatePointById(userId, userPointOfCharge.point(), TransactionType.CHARGE);
     }
 
     public UserPoint showPoint(long id) {
@@ -38,7 +38,7 @@ public class PointService {
         }
         pointHistoryRepository.create(userId, amount, TransactionType.USE);
         UserPoint useUserPoint = userPoint.minusPoint(amount);
-        return pointRepository.updatePointById(userId, useUserPoint.point());
+        return pointRepository.updatePointById(userId, useUserPoint.point(), TransactionType.USE);
     }
 
     public List<PointHistory> showHistories(long userId) {
