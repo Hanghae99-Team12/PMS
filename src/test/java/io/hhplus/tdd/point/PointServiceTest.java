@@ -141,4 +141,28 @@ class PointServiceTest {
         assertThatThrownBy(() ->pointService.showPoint(0L))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    /**
+     * When: 존재하지 않는 유저의 포인트 충전시,
+     * Then: 예외가 발생한다.
+     */
+    @Test
+    @DisplayName("존재하지 않는 유저의 포인트 충전시 예외 발생")
+    void charge_userPoint_non_existent_user_exception() {
+        // When & Then
+        assertThatThrownBy(() -> pointService.charge(0L, 5000L))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    /**
+     * When: 존재하지 않는 유저의 포인트 사용시시,
+     * Then: 예외가 발생한다.
+     */
+    @Test
+    @DisplayName("존재하지 않는 유저의 포인트 사용시 예외 발생")
+    void use_userPoint_non_existent_user_exception() {
+        // When & Then
+        assertThatThrownBy(() -> pointService.use(0L, 5000L))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }

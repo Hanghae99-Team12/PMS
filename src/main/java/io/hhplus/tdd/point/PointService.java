@@ -17,7 +17,9 @@ public class PointService {
     private final PointHistoryRepository pointHistoryRepository;
 
     public UserPoint charge(long userId, long amount) {
-        pointHistoryRepository.create(userId, amount, TransactionType.CHARGE);
+        UserPoint userPoint = showPoint(userId);
+        userPoint.plusPoint(amount);
+        pointHistoryRepository.create(userId, userPoint.point(), TransactionType.CHARGE);
         return pointRepository.updatePointById(userId, amount);
     }
 
